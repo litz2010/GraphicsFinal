@@ -23,7 +23,7 @@ void enemey_move(float maze[][3], float info[3][3], int worldX, int count){
 			else if (info[i][2] == 3){	//close
 				info[i][1] = info[i][1] - MOV_DISTANCE;
 			}
-			else if (info[i][2] == 4){	//far
+			else if (info[i][2] == 4){	//far1
 				info[i][1] = info[i][1] + MOV_DISTANCE; 
 			}
 		}
@@ -43,8 +43,8 @@ int move(float maze[][3], float info[3], int worldX){
 
 		choice = rand() % 4; 
 		switch (choice){
-		case 0: //exit far
-			if ((int)info[2] != 3){	//check to make sure enemy did not enter from far
+		case 0: //exit far1
+			if ((int)info[2] != 3){	//check to make sure enemy did not enter from far1
 
 				//can the next block can be entered from this direction. 
 				if (adjacent_block_layout_checker(maze, block, 0, 0, 0, 1)){ 
@@ -98,8 +98,8 @@ int move(float maze[][3], float info[3], int worldX){
 		default:
 			/*random attempt failed. attempt every direction once again. then turn around if 
 				no direction works */ 
-			//far
-			if ((int)info[2] != 3){	//check to make sure enemy did not enter from far
+			//far1
+			if ((int)info[2] != 3){	//check to make sure enemy did not enter from far1
 				//can the next block can be entered from this direction. 
 				if (adjacent_block_layout_checker(maze, block, 0, 0, 0, 1)){
 					//does the current block have a wall that direction?
@@ -140,7 +140,7 @@ int move(float maze[][3], float info[3], int worldX){
 			else if (info[2] == 3){	//close
 				info[2] = 4; 
 			}
-			else if (info[2] == 4){	//far
+			else if (info[2] == 4){	//far1
 				info[2] = 3; 
 			}
 		}//switch

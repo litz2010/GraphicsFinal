@@ -10,7 +10,7 @@ int maze_z_length;
 int maze_not_finished = 1;
 int finish_entry = 0; //exit of the maze entry
 int starting_entry = 0; //entrance of maze entry
-int open_paths[200][5]; //[0]entry, [1]exit left open?, [2]right?, [3]close? [4]far?
+int open_paths[200][5]; //[0]entry, [1]exit left open?, [2]right?, [3]close? [4]far1?
 int open_paths2[200][5];
 
 void maze_first_pass(float maze[][3], float info[3][3], int starting_x);
@@ -18,20 +18,20 @@ void maze_second_pass(float maze[][3]);
 void maze_third_pass(float maze[][3]);
 int first_pass_entrance_close(float maze[][3], int entry);
 int first_pass_entrance_right(float maze[][3], int entry);
-int first_pass_possibility_check(int entry, int m_left, int m_right, int m_close, int m_far);
+int first_pass_possibility_check(int entry, int m_left, int m_right, int m_close, int m_far1);
 int first_pass_outer_wall_check(int entry, int layout);
 int second_pass_path_expansion(float maze[][3], int entry, int return_info2[2]);
 int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]);
 int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]);
 int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]);
-int second_pass_entrance_far(float maze[][3], int entry, int return_info2[2]);
+int second_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]);
 int third_pass_path_expansion(float maze[][3], int entry, int return_info2[2]);
 int third_pass_entrance_left(float maze[][3], int entry, int return_info2[2]);
 int third_pass_entrance_right(float maze[][3], int entry, int return_info2[2]);
 int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]);
-int third_pass_entrance_far(float maze[][3], int entry, int return_info2[2]);
-int adjacent_block_layout_checker(float maze[][3], int entry, int left, int right, int close, int far);
-int layout_possibility_checker(float maze[][3], int entry, int m_left, int m_right, int m_close, int m_far);
+int third_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]);
+int adjacent_block_layout_checker(float maze[][3], int entry, int left, int right, int close, int far1);
+int layout_possibility_checker(float maze[][3], int entry, int m_left, int m_right, int m_close, int m_far1);
 void complete_outer_wall(float maze[][3]);
 void add_barrels(float maze[][3]); 
 
@@ -58,7 +58,7 @@ void generate_maze(float maze[][3], float info[3][3], int x_length, int z_length
  */
 void maze_first_pass(float maze[][3], float info[3][3],  int starting_x){
     
-    //int entry_direction 1 = left, 2=right, 3=close, 4 = far
+    //int entry_direction 1 = left, 2=right, 3=close, 4 = far1
     int entry = starting_x; //maze entry
 	int place_enemy = maze_x_length / 3;  
 	int enemies_placed = 0; 
@@ -331,7 +331,7 @@ int first_pass_outer_wall_check(int entry, int layout){
         return 1;
     }
     if( ((entry / maze_x_length) + 1 == maze_z_length)){
-        //first pass is done, reached far wall
+        //first pass is done, reached far1 wall
         maze_not_finished = 0;
         finish_entry = entry;
         return 1;
@@ -345,7 +345,7 @@ int first_pass_outer_wall_check(int entry, int layout){
  */
 void maze_second_pass(float maze[][3]){
     /*
-     open_paths: [0]entry, [1]exit left open?, [2]right?, [3]close? [4]far?
+     open_paths: [0]entry, [1]exit left open?, [2]right?, [3]close? [4]far1?
      If an exit is open to the left of the current block, then the player
      enters the next block from the right, i.e. 
      second_pass_entrance_right() is called.
@@ -379,7 +379,7 @@ void maze_second_pass(float maze[][3]){
             second_pass_path_expansion(maze, next_block_entry, return_info2);
         }
         return_info2[0] = 1;
-        if(open_paths[i][4]){ //exit far is open
+        if(open_paths[i][4]){ //exit far1 is open
            // next_block_entry = open_paths[i][0] + maze_x_length;
             return_info2[1] = 3;
             second_pass_path_expansion(maze, next_block_entry, return_info2);
@@ -400,9 +400,9 @@ int second_pass_path_expansion(float maze[][3], int entry, int return_info2[2]){
         }else if(return_info2[1] == 3){ //enter next block from close
             next_entry = next_entry + maze_x_length;
             second_pass_entrance_close(maze, next_entry, return_info2);
-        }else if(return_info2[1] == 4){ //enter next block from far
+        }else if(return_info2[1] == 4){ //enter next block from far1
             next_entry = next_entry - maze_x_length;
-            second_pass_entrance_far(maze, next_entry, return_info2);
+            second_pass_entrance_far1(maze, next_entry, return_info2);
         }
     }
     return 1;
@@ -415,7 +415,7 @@ int second_pass_path_expansion(float maze[][3], int entry, int return_info2[2]){
  */
 void maze_third_pass(float maze[][3]){
     /*
-     open_paths: [0]entry, [1]exit left open?, [2]right?, [3]close? [4]far?
+     open_paths: [0]entry, [1]exit left open?, [2]right?, [3]close? [4]far1?
      If an exit is open to the left of the current block, then the player
      enters the next block from the right, i.e.
      third_pass_entrance_right() is called.
@@ -453,7 +453,7 @@ void maze_third_pass(float maze[][3]){
            // printf("2p maze entry = %d and type =%f\n", next_block_entry, maze[next_block_entry][0]);
         }
         return_info2[0] = 1;
-        if(open_paths2[i][4]){ //exit far is open
+        if(open_paths2[i][4]){ //exit far1 is open
             next_block_entry = open_paths2[i][0] + maze_x_length;
             return_info2[1] = 3;
             second_pass_path_expansion(maze, next_block_entry, return_info2);
@@ -475,9 +475,9 @@ int third_pass_path_expansion(float maze[][3], int entry, int return_info2[2]){
         }else if(return_info2[1] == 3){ //enter next block from close
             next_entry = next_entry + maze_x_length;
             third_pass_entrance_close(maze, next_entry, return_info2);
-        }else if(return_info2[1] == 4){ //enter next block from far
+        }else if(return_info2[1] == 4){ //enter next block from far1
             next_entry = next_entry - maze_x_length;
-            third_pass_entrance_far(maze, next_entry, return_info2);
+            third_pass_entrance_far1(maze, next_entry, return_info2);
         }
     }
     return 1;
@@ -499,7 +499,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
     }
     
     /*
-     outer wall check, can only attempt to leave maze through the left, far,
+     outer wall check, can only attempt to leave maze through the left, far1,
      close walls.  If it touches any of these walls, this path is over. give
      this block a layout = 14; however, right is checked incase of bugs
     */
@@ -508,7 +508,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0; //done with branch
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 14;
         return_info2[0] = 0;
         return 1;
@@ -531,7 +531,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         case 0:
             second_choice = rand() % 3; //3 directions
             switch(second_choice){
-                case 0: //exit block far
+                case 0: //exit block far1
                     if(adjacent_block_layout_checker(maze, entry, 1, 0, 1, 1)){
                         maze[entry][0] = 0;
                         return_info2[0] = 1;
@@ -581,7 +581,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         case 1:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit block far
+                case 0: //exit block far1
                     if(adjacent_block_layout_checker(maze, entry, 1, 0, 0, 1)){
                         maze[entry][0] = 1;
                         return_info2[0] = 1;
@@ -617,7 +617,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         case 2:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit far
+                case 0: //exit far1
                     if(adjacent_block_layout_checker(maze, entry, 0, 0, 1, 1)){
                         maze[entry][0] = 2;
                         return_info2[0] = 1;
@@ -688,7 +688,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
             }
         case 4:
         case 5:
-            //exit far
+            //exit far1
             if(adjacent_block_layout_checker(maze, entry, 0, 0, 0, 1)){
                 maze[entry][0] = 5;
                 return_info2[0] = 1;
@@ -734,7 +734,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
     }
     
     /*
-     outer wall check, can only attempt to leave maze through the right, far,
+     outer wall check, can only attempt to leave maze through the right, far1,
      close walls.  If it touches any of these walls, this path is over. give
      this block a layout = 12;
      */
@@ -743,7 +743,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0; //branch is finished
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 12;
         return_info2[0] = 0;
         return 1;
@@ -766,7 +766,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         case 0:
             second_choice = rand() % 3; //3 directions
             switch(second_choice){
-                case 0: //exit block far
+                case 0: //exit block far1
                     if(adjacent_block_layout_checker(maze, entry, 0, 1, 1, 1)){
                         maze[entry][0] = 0;
                         return_info2[0] = 1;
@@ -816,7 +816,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         case 1:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit block far
+                case 0: //exit block far1
                     if(adjacent_block_layout_checker(maze, entry, 0, 1, 0, 1)){
                         maze[entry][0] = 1;
                         return_info2[0] = 1;
@@ -888,7 +888,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         case 3:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit far
+                case 0: //exit far1
                     if(adjacent_block_layout_checker(maze, entry, 0, 0, 1, 1)){
                         maze[entry][0] = 4;
                         return_info2[0] = 1;
@@ -932,7 +932,7 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
             }
         case 6:
         case 7:
-            //exit far
+            //exit far1
             if(adjacent_block_layout_checker(maze, entry, 0, 0, 0, 1)){
                 maze[entry][0] = 7;
                 return_info2[0] = 1;
@@ -970,7 +970,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
     
     /*
      outer wall check, can only attempt to leave maze through the right, left,
-     far, walls.  If it touches any of these walls, this path is over. give
+     far1, walls.  If it touches any of these walls, this path is over. give
      this block a layout = 11;
      */
     if( (entry % maze_x_length) == 0){ //right
@@ -978,7 +978,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 11;
         return_info2[0] = 0;
         return 1;
@@ -1001,7 +1001,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         case 0:
             second_choice = rand() % 3; //3 directions
             switch(second_choice){
-                case 0: //exit block far
+                case 0: //exit block far1
                     if(adjacent_block_layout_checker(maze, entry, 1, 1, 0, 1)){
                         maze[entry][0] = 0;
                         return_info2[0] = 1;
@@ -1051,7 +1051,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         case 1:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit far
+                case 0: //exit far1
                     if(adjacent_block_layout_checker(maze, entry, 0, 1, 0, 1)){
                         maze[entry][0] = 2;
                         return_info2[0] = 1;
@@ -1123,7 +1123,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         case 3:
             second_choice = rand() % 2; //2 directions
             switch(second_choice){
-                case 0: //exit far
+                case 0: //exit far1
                     if(adjacent_block_layout_checker(maze, entry, 1, 0, 0, 1)){
                         maze[entry][0] = 4;
                         return_info2[0] = 1;
@@ -1158,7 +1158,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
             }
         case 4:
         case 5:
-            //exit far
+            //exit far1
             if(adjacent_block_layout_checker(maze, entry, 0, 0, 0, 1)){
                 maze[entry][0] = 8;
                 return_info2[0] = 1;
@@ -1191,7 +1191,7 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
     return 1;
 }
 
-int second_pass_entrance_far(float maze[][3], int entry, int return_info2[2]){
+int second_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]){
     
     int second_choice = 0; //allows for options to fall through
     int second_break = 0;
@@ -1226,7 +1226,7 @@ int second_pass_entrance_far(float maze[][3], int entry, int return_info2[2]){
         return_info2[1] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) + 1 == maze_z_length){ //far
+	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1
 		maze[entry][0] = 13;
 		return_info2[0] = 0;
 		return_info2[1] = 0;
@@ -1442,7 +1442,7 @@ int third_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
     }
     
     /*
-     outer wall check, can only attempt to leave maze through the right, far,
+     outer wall check, can only attempt to leave maze through the right, far1,
      close walls.  If it touches any of these walls, this path is over. give
      this block a layout = 12;
      */
@@ -1451,7 +1451,7 @@ int third_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0; //branch is finished
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 12;
         return_info2[0] = 0;
         return 1;
@@ -1507,7 +1507,7 @@ int third_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
     }
     
     /*
-     outer wall check, can only attempt to leave maze through the left, far,
+     outer wall check, can only attempt to leave maze through the left, far1,
      close walls.  If it touches any of these walls, this path is over. give
      this block a layout = 14;
      */
@@ -1516,7 +1516,7 @@ int third_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0; //done with branch
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 14;
         return_info2[0] = 0;
         return 1;
@@ -1536,7 +1536,7 @@ int third_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
     //not work then we fall through to the next case and try again
     int choice = rand() % 2;
     switch(choice){
-        case 0: //exit far
+        case 0: //exit far1
             if(adjacent_block_layout_checker(maze, entry, 0, 0, 0, 1)){
                 maze[entry][0] = 5;
                 return_info2[0] = 1;
@@ -1577,7 +1577,7 @@ int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
     
     /*
      outer wall check, can only attempt to leave maze through the right, left,
-     far, walls.  If it touches any of these walls, this path is over. give
+     far1, walls.  If it touches any of these walls, this path is over. give
      this block a layout = 11;
      */
     if( (entry % maze_x_length) == 0){ //right
@@ -1585,7 +1585,7 @@ int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-    if( (entry / maze_x_length) + 1 == maze_z_length){ //far
+    if( (entry / maze_x_length) + 1 == maze_z_length){ //far1
         maze[entry][0] = 11;
         return_info2[0] = 0;
         return 1;
@@ -1605,7 +1605,7 @@ int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
     //not work then we fall through to the next case and try again
     int choice = rand() % 2;
     switch(choice){
-        case 0: //leave far
+        case 0: //leave far1
             if(adjacent_block_layout_checker(maze, entry, 0, 0, 0, 1)){
                 maze[entry][0] = 8;
                 return_info2[0] = 1;
@@ -1634,7 +1634,7 @@ int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
     return 1;
 }
 
-int third_pass_entrance_far(float maze[][3], int entry, int return_info2[2]){
+int third_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]){
     
     //is the new block already assigned? - do nothing
     if(maze[entry][0] != -1){
@@ -1666,7 +1666,7 @@ int third_pass_entrance_far(float maze[][3], int entry, int return_info2[2]){
         return_info2[1] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) + 1 == maze_z_length){ //far
+	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1
 		maze[entry][0] = 13;
 		return_info2[0] = 0;
 		return_info2[1] = 0;
@@ -1721,7 +1721,7 @@ void complete_outer_wall(float maze[][3]){
         }
         entry = entry + 1;
     }
-    //far wall
+    //far1 wall
     entry = maze_x_length * (maze_z_length -1);
     for(i = 0; i<outer_wall_blocks; i++){
         if(maze[entry][0] == -1){
@@ -1765,7 +1765,7 @@ void complete_outer_wall(float maze[][3]){
     the block.  Then checks that all possible directions align well with the
     adjacent blocks to the provided entry. Returns 0 if there is a contradiction
  */
-int adjacent_block_layout_checker(float maze[][3], int entry, int left, int right, int close, int far){
+int adjacent_block_layout_checker(float maze[][3], int entry, int left, int right, int close, int far1){
     
     int next_entry = 0;
     
@@ -1782,13 +1782,13 @@ int adjacent_block_layout_checker(float maze[][3], int entry, int left, int righ
             return 0;
     }
     if(close){
-        //leave current block close. Enter next block from far.
+        //leave current block close. Enter next block from far1.
         next_entry = entry - maze_x_length;
         if(layout_possibility_checker(maze, next_entry, 0, 0, 0, 1) == 0)
             return 0;
     }
-    if(far){
-        //leave current block far. enter next block from close.
+    if(far1){
+        //leave current block far1. enter next block from close.
         next_entry = entry + maze_x_length;
         if(layout_possibility_checker(maze, next_entry, 0, 0, 1, 0) == 0)
             return 0;
@@ -1807,116 +1807,116 @@ int adjacent_block_layout_checker(float maze[][3], int entry, int left, int righ
  
     returns 0 if block layout cannot work
  */
-int layout_possibility_checker(float maze[][3], int entry, int e_left, int e_right, int e_close, int e_far){
+int layout_possibility_checker(float maze[][3], int entry, int e_left, int e_right, int e_close, int e_far1){
     
     int adjacent_wall_layout = maze[entry][0];
     int adjacent_left    =0;
     int adjacent_right   =0;
     int adjacent_close   =0;
-    int adjacent_far     =0;
+    int adjacent_far1     =0;
     
     //is it a part of the outer wall? -doesnt matter. other checks in place for that
 
     switch( adjacent_wall_layout ){
         case -1:
             adjacent_close = 0;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 0;
             adjacent_right = 0;
             break;
         case 0:
             adjacent_close = 0;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 0;
             adjacent_right = 0;
             break;
         case 1:
             adjacent_close = 1;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 0;
             adjacent_right = 0;
             break;
         case 2:
             adjacent_close = 0;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 1;
             adjacent_right = 0;
             break;
         case 3:
             adjacent_close = 0;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 0;
             adjacent_right = 0;
             break;
         case 4:
             adjacent_close = 0;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 0;
             adjacent_right = 1;
             break;
         case 5:
             adjacent_close = 1;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 1;
             adjacent_right = 0;
             break;
         case 6:
             adjacent_close = 1;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 0;
             adjacent_right = 0;
             break;
         case 7:
             adjacent_close = 1;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 0;
             adjacent_right = 1;
             break;
         case 8:
             adjacent_close = 0;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 1;
             adjacent_right = 1;
             break;
         case 9:
             adjacent_close = 0;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 1;
             adjacent_right = 0;
             break;
         case 10:
             adjacent_close = 0;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 0;
             adjacent_right = 1;
             break;
         case 11:
             adjacent_close = 0;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 1;
             adjacent_right = 1;
             break;
         case 12:
             adjacent_close = 1;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 0;
             adjacent_right = 1;
             break;
         case 13:
             adjacent_close = 1;
-            adjacent_far   = 0;
+            adjacent_far1   = 0;
             adjacent_left  = 1;
             adjacent_right = 1;
             break;
         case 14:
             adjacent_close = 1;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 1;
             adjacent_right = 0;
             break;
         case 15:
             adjacent_close = 1;
-            adjacent_far   = 1;
+            adjacent_far1   = 1;
             adjacent_left  = 1;
             adjacent_right = 1;
             break;
@@ -1934,8 +1934,8 @@ int layout_possibility_checker(float maze[][3], int entry, int e_left, int e_rig
         if(adjacent_close == 1)
             return 0;
     }
-    if(e_far){
-        if(adjacent_far == 1)
+    if(e_far1){
+        if(adjacent_far1 == 1)
             return 0;
     }
     

@@ -47,7 +47,7 @@ int detect_collision(float maze[][3], float user[7], int worldX){
 				return 0; 
         }
     }
-    //far wall?
+    //far1 wall?
     if(layout_possibility_checker(maze, block, 0, 0, 0, 1) == 0){
         collision_point = zz * 10 + 9;
 		if (collision_point - user[1] < 0.25)

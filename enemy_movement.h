@@ -16,6 +16,6 @@
 /*
 	info[][0] = x coord
 	info[][1] = z coord
-	info[][2] = direction traveling... 1 = left, 2 = right, 3 = close, 4 = far
+	info[][2] = direction traveling... 1 = left, 2 = right, 3 = close, 4 = far1
 */
 void enemey_move(float maze[][3], float info[3][3], int worldX, int count);
