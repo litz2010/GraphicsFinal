@@ -58,10 +58,8 @@ void make_cube()
 //spawn enemy at starting x and z
 void make_enemy()
 {
-
 	glPushMatrix();
-	{
-		
+	{		
 		glTranslatef(0,1,0);
 		glScalef(.25,.25,.25);
 		draw_head();
@@ -72,7 +70,6 @@ void make_enemy()
 		draw_arms();		
 	}
 	glPopMatrix();
-
 }
 
 void draw_head()
@@ -132,59 +129,65 @@ void draw_legs()
 	glPopMatrix();
 }
 
-int enemy_detected()
+int enemy_detected(GLfloat userPos[], float enemyPos[3][3])
 {
 	//temp vars
-	GLfloat light0_pos[] = {5, 2, 2, 0};
+	/*GLfloat light0_pos[] = {5, 2, 2, 0};
 	GLfloat light0_dir[] = {0, 0, 1};
 	float maze[900][3];
-	float enemy_pos[3][3];
+	float enemy_pos[3][3];*/
 
-		float sightBoundLong;
+	float sightBoundLong;
 	float sightBoundWide[2];
 
 	int i, numEnemies;
 
-	numEnemies = sizeof(enemy_pos)/sizeof(enemy_pos[0]);	
+	numEnemies = sizeof(enemyPos) / sizeof(enemyPos[0]);
 
 	for(i=0;i<numEnemies;i++)
 	{
 		//light0_pos[0][2];
-		if(enemy_pos[i][2] == 1)//enemy facing left
+		if (enemyPos[i][2] == 1)//enemy facing left
 		{
 			sightBoundLong = enemy_pos[i][0]+30;
-			sightBoundWide[0] = enemy_pos[i][1]-5;
-			sightBoundWide[1] = enemy_pos[i][1]+5;
-			if(light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong)
+			sightBoundWide[0] = enemyPos[i][1] - 5;
+			sightBoundWide[1] = enemyPos[i][1] + 5;
+			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
 			{
-				
+				//check for objects/walls in the way
 			}
 		}
-		else if(enemy_pos[i][2] == 2)//enemy facing right
+		else if (enemyPos[i][2] == 2)//enemy facing right
 		{
 			sightBoundLong = enemy_pos[i][0]-30;
-			if(light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong)
+			sightBoundWide[0] = enemyPos[i][1] - 5;
+			sightBoundWide[1] = enemyPos[i][1] + 5;
+			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
 			{
-				
+				//check for objects/wall in the way
 			}
 		}
-		else if(enemy_pos[i][2] == 3)//enemy facing close
+		else if (enemyPos[i][2] == 3)//enemy facing close
 		{
-			sightBoundLong = enemy_pos[i][2]+30;
-			if(light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][2] + 30;
+			sightBoundWide[0] = enemyPos[i][1] - 5;
+			sightBoundWide[1] = enemyPos[i][1] + 5;
+			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
 			{
-				
+				//check for objects/wall in the way
 			}
 		}
-		else if(enemy_pos[i][2] == 4)//enemy facing far
+		else if (enemyPos[i][2] == 4)//enemy facing far
 		{
-			sightBoundLong = enemy_pos[i][2]-30;
-			if(light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][2] - 30;
+			sightBoundWide[0] = enemyPos[i][0] - 5;
+			sightBoundWide[1] = enemyPos[i][0] + 5;
+			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
 			{
-				
+				//check for objects/wall in the way
 			}
 		}
 
 	}
-	return 0;
+	return FALSE;
 }

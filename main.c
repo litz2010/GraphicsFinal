@@ -18,6 +18,7 @@
 #include "setup.h"
 #include "enemy_movement.h"
 #include "collision_detection.h"
+#include "model_enemy.h"
 
 #define FALSE 0
 #define TRUE  1
