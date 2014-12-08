@@ -231,32 +231,3 @@ void draw_barrel(int index){
 	}
 	glPopMatrix();
 }
-
-
-boolean enemy_detected()
-{
-	int i;
-	float sightBound;
-	for(i=0;i<enemy_pos.length;i++)
-	{
-		//light0_pos[0][2];
-		if(enemy_pos[i][2] == 1)//enemy facing left
-		{
-			sightBound = enemy_pos[i][0]+30;
-			//if(light0_pos[0])
-		}
-		else if(enemy_pos[i][2] == 2)//enemy facing right
-		{
-
-		}
-		else if(enemy_pos[i][2] == 3)//enemy facing close
-		{
-
-		}
-		else if(enemy_pos[i][2] == 4)//enemy facing far
-		{
-
-		}
-
-	}
-}
