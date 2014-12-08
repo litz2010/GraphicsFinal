@@ -117,7 +117,7 @@ void my_display(void) {
 		glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light0_dir);
 		glColor3fv(colors[0]);
-		gluCylinder(qojb, .2f, .4f, 1, 32, 32);
+		gluCylinder(qojb, .2f, .4f, 1, 32, 32);		
 	}
 	glPopMatrix();
 
@@ -126,8 +126,25 @@ void my_display(void) {
 		{ //enemy
 
 			glTranslatef(enemy_pos[i][0], 2, enemy_pos[i][1]);
-			glScalef(1, 35, 1);
-			glutSolidCube(1);
+			float enemyRotateAngle;
+			if (enemy_pos[i][2] == 1)//left
+			{
+				enemyRotateAngle = 90;
+			}
+			else if (enemy_pos[i][2] == 2)//right
+			{
+				enemyRotateAngle = -90;
+			}
+			else if (enemy_pos[i][2] == 3)//close
+			{
+				enemyRotateAngle = 180;
+			}
+			else if (enemy_pos[i][2] == 4)//far
+			{
+				enemyRotateAngle = 0;
+			}
+			glRotatef(enemyRotateAngle,0,1,0);
+			make_enemy();			
 		}
 		glPopMatrix();
 	}

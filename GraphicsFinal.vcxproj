@@ -80,6 +80,7 @@
     <ClCompile Include="enemy_movement.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="maze_generator.c" />
+    <ClCompile Include="model_enemy.c" />
     <ClCompile Include="rectangle_generator.c" />
     <ClCompile Include="setup.c" />
   </ItemGroup>
@@ -88,6 +89,7 @@
     <ClInclude Include="draw_maze.h" />
     <ClInclude Include="enemy_movement.h" />
     <ClInclude Include="maze_generator.h" />
+    <ClInclude Include="model_enemy.h" />
     <ClInclude Include="rectangle_generator.h" />
     <ClInclude Include="setup.h" />
   </ItemGroup>
