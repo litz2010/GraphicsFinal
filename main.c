@@ -43,7 +43,8 @@ float maze[900][3];
 float enemy_pos[3][3];
 float user_pos[3]; //not actual position. light0_pos is the user
 int move_count = 0; 
-
+int numLives = 3;
+int detectionCounter = 0;
 
 int main(int argc, char **argv) {
 	
@@ -167,6 +168,18 @@ void my_display(void) {
 	//int isDetected = enemy_detected(light0_pos, enemy_pos[3]);
 	int isDetected = enemy_detected1();
 
+	if (isDetected == TRUE & detectionCounter == 0)
+	{
+		numLives--;
+		detectionCounter = 10;
+	}
+
+	if (numLives == 0)
+	{
+		//return back to beginning of maze;
+		//numLives = 3
+		numLives = 3;
+	}	
     /* buffer is ready */
     glutSwapBuffers();
 }
@@ -237,6 +250,10 @@ void my_keyboard( unsigned char key, int x, int y ) {
 
 void NPC_timer(int val) {
 	move_count = (move_count + 1) % 5;
+	if (detectionCounter > 0)
+	{
+		detectionCounter--;
+	}
 	glutPostRedisplay();
 	enemey_move(maze, enemy_pos, WORLD_X, move_count);
 	glutTimerFunc(300, NPC_timer, 0);
@@ -275,8 +292,8 @@ int enemy_detected1()
 			sightBoundWide[1] = enemy_pos[i][1] + 5;//z+5
 			if (light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong && light0_pos[2] >= sightBoundWide[0] && light0_pos[2] <= sightBoundWide[1])
 			{
-				//check for objects/walls in the way
-
+				//check for objects/wall in between player and enemy
+				
 				returnVal = TRUE;
 				printf("Detected enemy facing left!\n");
 			}			
@@ -288,7 +305,7 @@ int enemy_detected1()
 			sightBoundWide[1] = enemy_pos[i][1] + 5;//z+5
 			if (light0_pos[0] <= enemy_pos[i][0] && light0_pos[0] >= sightBoundLong && light0_pos[2] >= sightBoundWide[0] && light0_pos[2] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing right!\n");
@@ -301,7 +318,7 @@ int enemy_detected1()
 			sightBoundWide[1] = enemy_pos[i][0] + 5;//x+5
 			if (light0_pos[2] <= enemy_pos[i][1] && light0_pos[2] >= sightBoundLong && light0_pos[0] >= sightBoundWide[0] && light0_pos[0] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing close!\n");
@@ -314,12 +331,12 @@ int enemy_detected1()
 			sightBoundWide[1] = enemy_pos[i][0] + 5;//x+5
 			if (light0_pos[2] >= enemy_pos[i][1] && light0_pos[2] <= sightBoundLong && light0_pos[0] >= sightBoundWide[0] && light0_pos[0] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing far!\n");
 			}			
 		}
 	}
-	return FALSE;
+	return returnVal;
 }

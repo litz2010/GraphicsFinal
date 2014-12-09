@@ -146,7 +146,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 			sightBoundWide[1] = enemyPos[i][1] + 5;//z+5
 			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong && userPos[2] >= sightBoundWide[0] && userPos[2] <= sightBoundWide[1])
 			{
-				//check for objects/walls in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing left!\n");
@@ -159,7 +159,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 			sightBoundWide[1] = enemyPos[i][1] + 5;//z+5
 			if (userPos[0] <= enemyPos[i][0] && userPos[0] >= sightBoundLong && userPos[2] >= sightBoundWide[0] && userPos[2] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing right!\n");
@@ -172,7 +172,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 			sightBoundWide[1] = enemyPos[i][0] + 5;//x+5
 			if (userPos[2] <= enemyPos[i][1] && userPos[2] >= sightBoundLong && userPos[0] >= sightBoundWide[0] && userPos[0] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing close!\n");
@@ -185,7 +185,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 			sightBoundWide[1] = enemyPos[i][0] + 5;//x+5
 			if (userPos[2] >= enemyPos[i][1] && userPos[2] <= sightBoundLong && userPos[0] >= sightBoundWide[0] && userPos[0] <= sightBoundWide[1])
 			{
-				//check for objects/wall in the way
+				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
 				printf("Detected enemy facing far!\n");
