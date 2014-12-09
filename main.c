@@ -22,16 +22,18 @@
 
 #define FALSE 0
 #define TRUE  1
+#define NUM_ENEMIES
 
 #define DELTA_DEG  10
 #define DELTA_TIME 50
-#define WORLD_X 30
-#define WORLD_Z 30
+#define WORLD_X 10
+#define WORLD_Z 10
 
 void glut_setup(void);
 void my_keyboard( unsigned char key, int x, int y );
 void my_display(void);
 void draw_barrel(int index);	//delete~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+int enemy_detected1();
 
 int light0_theta = 0;
 int viewPerspective = 0; //0 = 3rd person, 1 = first person
@@ -41,6 +43,7 @@ float maze[900][3];
 float enemy_pos[3][3];
 float user_pos[3]; //not actual position. light0_pos is the user
 int move_count = 0; 
+
 
 int main(int argc, char **argv) {
 	
@@ -128,6 +131,7 @@ void my_display(void) {
 
 			glTranslatef(enemy_pos[i][0], 2, enemy_pos[i][1]);
 			float enemyRotateAngle;
+			
 			if (enemy_pos[i][2] == 1)//left
 			{
 				enemyRotateAngle = 90;
@@ -149,7 +153,7 @@ void my_display(void) {
 		}
 		glPopMatrix();
 	}
-   
+	
     //draw maze
     for(int i =0; i<WORLD_X*WORLD_Z; i++){
         if(maze[i][0] != -1 && maze[i][0] != 0){
@@ -159,6 +163,10 @@ void my_display(void) {
         }
     }
     
+	
+	//int isDetected = enemy_detected(light0_pos, enemy_pos[3]);
+	int isDetected = enemy_detected1();
+
     /* buffer is ready */
     glutSwapBuffers();
 }
@@ -248,4 +256,70 @@ void draw_barrel(int index){
 		glutSolidCube(1);
 	}
 	glPopMatrix();
+}
+
+int enemy_detected1()
+{
+	float sightBoundLong;
+	float sightBoundWide[2];
+
+	int i, returnVal;
+	returnVal = FALSE;
+	
+	for (i = 0; i<3; i++)
+	{
+		if (enemy_pos[i][2] == 1)//enemy facing left
+		{
+			sightBoundLong = enemy_pos[i][0] + 30; //x+30
+			sightBoundWide[0] = enemy_pos[i][1] - 5;//z-5
+			sightBoundWide[1] = enemy_pos[i][1] + 5;//z+5
+			if (light0_pos[0] >= enemy_pos[i][0] && light0_pos[0] <= sightBoundLong && light0_pos[2] >= sightBoundWide[0] && light0_pos[2] <= sightBoundWide[1])
+			{
+				//check for objects/walls in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing left!\n");
+			}			
+		}
+		else if (enemy_pos[i][2] == 2)//enemy facing right
+		{
+			sightBoundLong = enemy_pos[i][0] - 30;//x-30
+			sightBoundWide[0] = enemy_pos[i][1] - 5;//z-5
+			sightBoundWide[1] = enemy_pos[i][1] + 5;//z+5
+			if (light0_pos[0] <= enemy_pos[i][0] && light0_pos[0] >= sightBoundLong && light0_pos[2] >= sightBoundWide[0] && light0_pos[2] <= sightBoundWide[1])
+			{
+				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing right!\n");
+			}			
+		}
+		else if (enemy_pos[i][2] == 3)//enemy facing close
+		{
+			sightBoundLong = enemy_pos[i][1] - 30;//z-30
+			sightBoundWide[0] = enemy_pos[i][0] - 5;//x-5
+			sightBoundWide[1] = enemy_pos[i][0] + 5;//x+5
+			if (light0_pos[2] <= enemy_pos[i][1] && light0_pos[2] >= sightBoundLong && light0_pos[0] >= sightBoundWide[0] && light0_pos[0] <= sightBoundWide[1])
+			{
+				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing close!\n");
+			}			
+		}
+		else if (enemy_pos[i][2] == 4)//enemy facing far
+		{
+			sightBoundLong = enemy_pos[i][1] + 30;//z+30
+			sightBoundWide[0] = enemy_pos[i][0] - 5;//x-5
+			sightBoundWide[1] = enemy_pos[i][0] + 5;//x+5
+			if (light0_pos[2] >= enemy_pos[i][1] && light0_pos[2] <= sightBoundLong && light0_pos[0] >= sightBoundWide[0] && light0_pos[0] <= sightBoundWide[1])
+			{
+				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing far!\n");
+			}			
+		}
+	}
+	return FALSE;
 }

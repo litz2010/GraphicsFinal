@@ -13,4 +13,4 @@ void draw_head();
 void draw_body();
 void draw_arms();
 void draw_legs();
-int enemy_detected();
+int enemy_detected(GLfloat userPos[4], float enemyPos[][3]);

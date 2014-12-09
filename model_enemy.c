@@ -30,7 +30,7 @@ GLfloat vertices[][3] = {
 };
 
 
-GLfloat enemy_pos[][3] = {{0,0,1}};
+//GLfloat enemy_pos[][3] = {{0,0,1}};
 
 void make_quad(int iv1, int iv2, int iv3, int iv4, int ic) {
   glBegin(GL_POLYGON); 
@@ -129,65 +129,68 @@ void draw_legs()
 	glPopMatrix();
 }
 
-int enemy_detected(GLfloat userPos[], float enemyPos[3][3])
+int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 {
-	//temp vars
-	/*GLfloat light0_pos[] = {5, 2, 2, 0};
-	GLfloat light0_dir[] = {0, 0, 1};
-	float maze[900][3];
-	float enemy_pos[3][3];*/
-
 	float sightBoundLong;
 	float sightBoundWide[2];
 
-	int i, numEnemies;
-
-	numEnemies = sizeof(enemyPos) / sizeof(enemyPos[0]);
-
-	for(i=0;i<numEnemies;i++)
+	int i, returnVal;
+	returnVal = FALSE;
+	
+	for (i = 0; i<3; i++)
 	{
-		//light0_pos[0][2];
 		if (enemyPos[i][2] == 1)//enemy facing left
 		{
-			sightBoundLong = enemy_pos[i][0]+30;
-			sightBoundWide[0] = enemyPos[i][1] - 5;
-			sightBoundWide[1] = enemyPos[i][1] + 5;
-			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][0] + 30; //x+30
+			sightBoundWide[0] = enemyPos[i][1] - 5;//z-5
+			sightBoundWide[1] = enemyPos[i][1] + 5;//z+5
+			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong && userPos[2] >= sightBoundWide[0] && userPos[2] <= sightBoundWide[1])
 			{
 				//check for objects/walls in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing left!\n");
 			}
 		}
 		else if (enemyPos[i][2] == 2)//enemy facing right
 		{
-			sightBoundLong = enemy_pos[i][0]-30;
-			sightBoundWide[0] = enemyPos[i][1] - 5;
-			sightBoundWide[1] = enemyPos[i][1] + 5;
-			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][0] - 30;//x-30
+			sightBoundWide[0] = enemyPos[i][1] - 5;//z-5
+			sightBoundWide[1] = enemyPos[i][1] + 5;//z+5
+			if (userPos[0] <= enemyPos[i][0] && userPos[0] >= sightBoundLong && userPos[2] >= sightBoundWide[0] && userPos[2] <= sightBoundWide[1])
 			{
 				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing right!\n");
 			}
 		}
 		else if (enemyPos[i][2] == 3)//enemy facing close
 		{
-			sightBoundLong = enemyPos[i][2] + 30;
-			sightBoundWide[0] = enemyPos[i][1] - 5;
-			sightBoundWide[1] = enemyPos[i][1] + 5;
-			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][1] - 30;//z-30
+			sightBoundWide[0] = enemyPos[i][0] - 5;//x-5
+			sightBoundWide[1] = enemyPos[i][0] + 5;//x+5
+			if (userPos[2] <= enemyPos[i][1] && userPos[2] >= sightBoundLong && userPos[0] >= sightBoundWide[0] && userPos[0] <= sightBoundWide[1])
 			{
 				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing close!\n");
 			}
 		}
 		else if (enemyPos[i][2] == 4)//enemy facing far
 		{
-			sightBoundLong = enemyPos[i][2] - 30;
-			sightBoundWide[0] = enemyPos[i][0] - 5;
-			sightBoundWide[1] = enemyPos[i][0] + 5;
-			if (userPos[0] >= enemyPos[i][0] && userPos[0] <= sightBoundLong)
+			sightBoundLong = enemyPos[i][1] + 30;//z+30
+			sightBoundWide[0] = enemyPos[i][0] - 5;//x-5
+			sightBoundWide[1] = enemyPos[i][0] + 5;//x+5
+			if (userPos[2] >= enemyPos[i][1] && userPos[2] <= sightBoundLong && userPos[0] >= sightBoundWide[0] && userPos[0] <= sightBoundWide[1])
 			{
 				//check for objects/wall in the way
+
+				returnVal = TRUE;
+				printf("Detected enemy facing far!\n");
 			}
 		}
-
 	}
-	return FALSE;
+	return returnVal;
 }
