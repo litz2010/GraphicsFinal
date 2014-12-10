@@ -7,7 +7,7 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
   //  GLfloat mat_diff[] = {info[11],info[12],info[13],info[14],info[15]};
    // GLfloat mat_specular[]  = {info[16],info[17],info[18],info[19]};
     //GLfloat mat_shininess[] = {info[2]};
-   
+    
     int close   =0; // draw wall closest to orgin?
     int far1     =0; // draw wall far1est from orgin?
     int left    =0; // draw wall +x to orgin?

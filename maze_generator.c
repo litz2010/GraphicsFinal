@@ -9,9 +9,10 @@ int maze_x_length;
 int maze_z_length;
 int maze_not_finished = 1;
 int finish_entry = 0; //exit of the maze entry
+int finish_entry_layout = 0;
 int starting_entry = 0; //entrance of maze entry
-int open_paths[200][5]; //[0]entry, [1]exit left open?, [2]right?, [3]close? [4]far1?
-int open_paths2[200][5];
+int open_paths[2000][5]; //[0]entry, [1]exit left open?, [2]right?, [3]close? [4]far1?
+int open_paths2[2000][5];
 
 void maze_first_pass(float maze[][3], float info[3][3], int starting_x);
 void maze_second_pass(float maze[][3]);
@@ -100,6 +101,7 @@ void maze_first_pass(float maze[][3], float info[3][3],  int starting_x){
 			place_enemy = place_enemy + ((int)maze_x_length / 10); 
 		}
     }
+    maze[entry][0] = finish_entry_layout; //make the exit is an exit.
 }
 
 //10% chance for every maze block to have a barrel
@@ -328,12 +330,14 @@ int first_pass_outer_wall_check(int entry, int layout){
         //first pass is done, reached left wall
         maze_not_finished = 0;
         finish_entry = entry;
+        finish_entry_layout = 6;
         return 1;
     }
     if( ((entry / maze_x_length) + 1 == maze_z_length)){
         //first pass is done, reached far1 wall
         maze_not_finished = 0;
         finish_entry = entry;
+        finish_entry_layout = 8;
         return 1;
     }
     return 1;
@@ -519,7 +523,7 @@ int second_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         return 1;
     }
 	if ((entry % maze_x_length) == 0){ //right
-		maze[entry][0] = 14; 
+		maze[entry][0] = 12;
 		return_info2[0] = 0; 
 		return 1;
 	}
@@ -753,8 +757,8 @@ int second_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-	if ((entry % maze_x_length) + 1 == maze_x_length){ //left
-		maze[entry][0] = 12;
+	if ((entry % maze_x_length) + 1 == maze_x_length){ //left (incase of bugs)
+		maze[entry][0] = 14;
 		return_info2[0] = 0;
 		return 1;
 	}
@@ -988,8 +992,8 @@ int second_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) == 0){ //close
-		maze[entry][0] = 11;
+	if ((entry / maze_x_length) == 0){ //close (incase of bugs)
+		maze[entry][0] = 13;
 		return_info2[0] = 0;
 		return 1;
 	}
@@ -1226,8 +1230,8 @@ int second_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]){
         return_info2[1] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1
-		maze[entry][0] = 13;
+	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1 (in case of bugs)
+		maze[entry][0] = 11;
 		return_info2[0] = 0;
 		return_info2[1] = 0;
 		return 1;
@@ -1461,8 +1465,8 @@ int third_pass_entrance_left(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-	if ((entry % maze_x_length) + 1 == maze_x_length){ //left
-		maze[entry][0] = 12;
+	if ((entry % maze_x_length) + 1 == maze_x_length){ //left for bugs
+		maze[entry][0] = 14;
 		return_info2[0] = 0; //branch is finished
 		return 1;
 	}
@@ -1526,8 +1530,8 @@ int third_pass_entrance_right(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-	if ((entry % maze_x_length) == 0){ //right
-		maze[entry][0] = 14;
+	if ((entry % maze_x_length) == 0){ //right for bugs
+		maze[entry][0] = 12;
 		return_info2[0] = 0; //done with branch
 		return 1;
 	}
@@ -1595,8 +1599,8 @@ int third_pass_entrance_close(float maze[][3], int entry, int return_info2[2]){
         return_info2[0] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) == 0){ //close
-		maze[entry][0] = 11;
+	if ((entry / maze_x_length) == 0){ //close for bugs
+		maze[entry][0] = 13;
 		return_info2[0] = 0;
 		return 1;
 	}
@@ -1666,8 +1670,8 @@ int third_pass_entrance_far1(float maze[][3], int entry, int return_info2[2]){
         return_info2[1] = 0;
         return 1;
     }
-	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1
-		maze[entry][0] = 13;
+	if ((entry / maze_x_length) + 1 == maze_z_length){ //far1 for bugs
+		maze[entry][0] = 11;
 		return_info2[0] = 0;
 		return_info2[1] = 0;
 		return 1;
@@ -1771,15 +1775,19 @@ int adjacent_block_layout_checker(float maze[][3], int entry, int left, int righ
     
     if(left){
         //leave current block to the left. So you enter the next block from the right.
-        next_entry = entry + 1;
-        if(layout_possibility_checker(maze, next_entry, 0, 1, 0, 0) == 0 )
-            return 0;
+        if(entry % maze_x_length + 1 != maze_x_length){
+            next_entry = entry + 1;
+            if(layout_possibility_checker(maze, next_entry, 0, 1, 0, 0) == 0 )
+                return 0;
+        }
     }
     if(right){
         //leave current block to the right. So you enter the next block from the left.
-        next_entry = entry - 1;
-        if(layout_possibility_checker(maze, next_entry, 1, 0, 0, 0) == 0)
-            return 0;
+        if(entry % maze_x_length != 0){
+            next_entry = entry - 1;
+            if(layout_possibility_checker(maze, next_entry, 1, 0, 0, 0) == 0)
+                return 0;
+        }
     }
     if(close){
         //leave current block close. Enter next block from far1.
@@ -1920,6 +1928,11 @@ int layout_possibility_checker(float maze[][3], int entry, int e_left, int e_rig
             adjacent_left  = 1;
             adjacent_right = 1;
             break;
+        default:
+            adjacent_close = 0;
+            adjacent_far1   = 0;
+            adjacent_left  = 0;
+            adjacent_right = 0; 
     }
     
     if(e_left){

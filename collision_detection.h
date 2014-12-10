@@ -9,4 +9,4 @@
 
 #include "maze_generator.h"
 
-int detect_collision(float maze[][3], float user[7], int worldX);
+int detect_collision(float maze[][3], float user[7], int worldX, int row_change);

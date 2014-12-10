@@ -178,7 +178,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 				printf("Detected enemy facing close!\n");
 			}
 		}
-		else if (enemyPos[i][2] == 4)//enemy facing far
+		else if (enemyPos[i][2] == 4)//enemy facing far1
 		{
 			sightBoundLong = enemyPos[i][1] + 30;//z+30
 			sightBoundWide[0] = enemyPos[i][0] - 5;//x-5
@@ -188,7 +188,7 @@ int enemy_detected(GLfloat userPos[4], float enemyPos[][3])
 				//check for objects/wall in between player and enemy
 
 				returnVal = TRUE;
-				printf("Detected enemy facing far!\n");
+				printf("Detected enemy facing far1!\n");
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 #include "setup.h"
 
 void my_setup(void) {
+	glShadeModel(GL_FLAT);
     lighting_setup();
     return;
 }
@@ -40,24 +41,41 @@ void my_reshape(int w, int h) {
 
 void lighting_setup () {
     
-    GLfloat light0_amb[]      = {0.5, 0.5, 0.5, 1};
-    GLfloat light0_diffuse[]  = {0.4, 0.4, 0.4, 1};
-    GLfloat light0_specular[] = {1, 1, 1, 1};
-    GLfloat light0_exponent[] = {116};
-    GLfloat globalAmb[]       = {0.5, 0.5, 0.5, 1};
+    GLfloat light0_amb[]      = {0, 0, 0, 1};
+    GLfloat light0_diffuse[]  = {0, 1, 0, 1};
+    GLfloat light0_specular[] = {0, 1, 0, 1};
+    GLfloat light0_exponent = 0;
+	GLfloat globalAmb[]       = {0, 0, 0, 1};
+    //GLfloat globalAmb[]       = {0.005, 0.005, 0.005, 1};
+
+    GLfloat mat_shininess[] = { 50.0 };
+	GLfloat mat_amb_diff[]  = {.6,.6,.6,1};
+	GLfloat mat_specular[]  = {0.6, 0.6, 0.6,1};
+	GLfloat mat_high_shininess[] = {100};
+	GLfloat mat_emission[]  = {0,0,0, 0};
+
+    //glShadeModel (GL_SMOOTH);
+    //glLightfv(GL_LIGHT0,GL_SPECULAR,mat_specular);
+    /*glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mat_amb_diff);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat_emission);
+	 glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_high_shininess);*/
+
+    // Definig spotlight attributes
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_amb);
+	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF,80);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 1);
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
+    //glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 1.0f);
+    //glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f);
+
+
     //enable lighting
     glEnable(GL_LIGHTING);
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
-    
-    //flashlight
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light0_amb);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light0_specular);
-    glLightfv(GL_LIGHT0, GL_SPOT_EXPONENT, light0_exponent);
-    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 2.0f);
-    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 1.0f);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f);
+	//glEnable(GL_DEPTH_TEST);
+
     
     // reflective properites -- global ambiant light
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmb);

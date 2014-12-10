@@ -1,62 +1,78 @@
 #include "collision_detection.h"
 
-
-
-int detect_collision(float maze[][3], float user[7], int worldX){
+int detect_collision(float maze[][3], float user[7], int worldX, int row_change){
     
     int xx, zz, block;
 	double collision_point = 0; 
     xx = (int)user[0] / 10;
     zz = (int)user[1] / 10;
-    block = zz * worldX+ xx;
+    block = zz * worldX + xx;
     //check if the current block has a wall on the left.
     if(layout_possibility_checker(maze, block, 1, 0, 0, 0) == 0){
 		collision_point = xx * 10 + 9; 
-		if (collision_point - user[0] < 0.25)
-			return 0; 
+		if (collision_point - user[0] < 0.25){
+			printf("left layout checker stoping this");
+            return 0;
+        }
     }else{
         //no wall this block... check if next block to the left has a wall
         //on the right that we would run into.
-        if(adjacent_block_layout_checker(maze, block, 1, 0, 0, 0) == 0){
+        if( (adjacent_block_layout_checker(maze, block, 1, 0, 0, 0) == 0) ){
 			collision_point = xx * 10 + 10; 
-			if (collision_point - user[0] < 0.25)
+			if (collision_point - user[0] < 0.25){
+                printf("left layout %d mod check %d\n", (adjacent_block_layout_checker(maze, block, 1, 0, 0, 0) == 0 ),
+                       block % worldX + 1 != worldX);
+        
 				return 0;
+            }
         }
     }
     //right wall?
-    if(layout_possibility_checker(maze, block, 0, 1, 0, 0) == 0){
+    if(layout_possibility_checker(maze, block, 0, 1, 0, 0) == 0 && !row_change){
 		collision_point = xx * 10 + 1; 
-		if (user[0] - collision_point < 0.25)
-			return 0; 
+		if (user[0] - collision_point < 0.25){
+            printf("1st right wall checker\n");
+            return 0;
+        }
     }else{
         if(adjacent_block_layout_checker(maze, block, 0, 1, 0, 0) == 0){
    			collision_point = xx * 10;
-			if (user[0] - collision_point < 0.25)
-				return 0;
+			if (user[0] - collision_point < 0.25){
+                printf("2nd right wall checker\n");
+                return 0;
+            }
         }
     }
     //close wall?
     if(layout_possibility_checker(maze, block, 0, 0, 1, 0) == 0){
         collision_point = zz * 10 + 1;
-		if (user[1] - collision_point < 0.25)
-			return 0; 
+		if (user[1] - collision_point < 0.25){
+            printf("1st close wall checker\n");
+            return 0;
+        }
     }else{
         if(adjacent_block_layout_checker(maze, block, 0, 0, 1, 0) == 0){
             collision_point = zz * 10;
-			if (user[1] - collision_point < 0.25)
-				return 0; 
+			if (user[1] - collision_point < 0.25){
+                printf("2nd close wall checker\n");
+                return 0;
+            }
         }
     }
     //far1 wall?
     if(layout_possibility_checker(maze, block, 0, 0, 0, 1) == 0){
         collision_point = zz * 10 + 9;
-		if (collision_point - user[1] < 0.25)
-			return 0; 
+		if (collision_point - user[1] < 0.25){
+            printf("1st far1 wall checker\n");
+            return 0;
+        }
     }else{
         if(adjacent_block_layout_checker(maze, block, 0, 0, 0, 1) == 0){
             collision_point = zz * 10 + 10;
-			if (collision_point - user[1] < 0.25)
-				return 0;
+			if (collision_point - user[1] < 0.25){
+                printf("2nd far1 wall checker\n");
+                return 0;
+            }
         }
     }
 
