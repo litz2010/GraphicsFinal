@@ -36,14 +36,31 @@ void make_floor(int x, int z)
 {
     GLfloat checkedX;
     GLfloat checkedZ;
-    checkedX = x;
-    checkedZ = z;
-    GLfloat dimensions[][3] = {
+    int i, j;
+    checkedX = 0;
+    checkedZ = 0;
+    GLfloat dimensions[4][3] = {
         {0.0, 0.0, 0.0},
-        {0.0, 0.0, checkedZ},
-        {checkedX, 0.0, checkedZ},
-        {checkedX, 0.0, 0.0}
+        {0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0}
     };
-    //a grey plane
-    make_rectangle_textured(dimensions[0],dimensions[1],dimensions[2],dimensions[3], colors[4]);
+    for(i = 0; i < z; i++){
+        for(j = 0; j < x; j++){
+            dimensions[0][0] = checkedX;
+            dimensions[0][2] = checkedZ;
+            dimensions[1][0] = checkedX + 10;
+            dimensions[1][2] = checkedZ;
+            dimensions[2][0] = checkedX + 10;
+            dimensions[2][2] = checkedZ + 10;
+            dimensions[3][0] = checkedX;
+            dimensions[3][2] = checkedZ + 10;
+            //a green plane
+            make_rectangle_textured(dimensions[0],dimensions[1],dimensions[2],dimensions[3], colors[4]);
+            checkedX = checkedX + 10;
+        }
+        checkedZ = checkedZ + 10;
+        checkedX = 0; 
+    }
+    
 }

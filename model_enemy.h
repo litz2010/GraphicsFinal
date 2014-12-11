@@ -3,6 +3,8 @@
 #else
 #include <GL/glut.h>
 #endif
+#define FALSE 0
+#define TRUE  1
 
 
 
