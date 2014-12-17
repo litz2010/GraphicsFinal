@@ -39,6 +39,9 @@
     <ClCompile Include="model_enemy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="barrels.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision_detection.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="model_enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="barrels.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="barrels.c" />
     <ClCompile Include="collision_detection.c" />
     <ClCompile Include="draw_maze.c" />
     <ClCompile Include="enemy_movement.c" />
@@ -85,6 +86,7 @@
     <ClCompile Include="setup.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="barrels.h" />
     <ClInclude Include="collision_detection.h" />
     <ClInclude Include="draw_maze.h" />
     <ClInclude Include="enemy_movement.h" />

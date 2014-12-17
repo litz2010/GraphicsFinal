@@ -1,7 +1,4 @@
-
 #include "draw_maze.h"
-
-#define NUM_BLOCKS 30
 
 void draw_maze_block(float *info, int height, int maze_x, int entry){
 //    GLfloat mat_emission[]  = {info[3],info[4],info[5], info[6]};
@@ -129,7 +126,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
     }
     if( right){
         //draw the outer wall
-        
         xx = x;
         zz = z;
         yy = 0;
@@ -153,20 +149,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             zz = z;
         }
- /*       a[0] = x;
-        a[1] = 0;
-        a[2] = z;
-        b[0] = x;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x;
-        d[1] = height;
-        d[2] = z;
-        make_rectangle_textured(a, b, c, d, mat_amb);
- */
         //draw the inner wall
         xx = x + 1;
         zz = z;
@@ -191,20 +173,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             zz = z;
         }
-   /*     a[0] = x + 1;
-        a[1] = 0;
-        a[2] = z;
-        b[0] = x + 1;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x + 1;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 1;
-        d[1] = height;
-        d[2] = z;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-    */
         //draw top of wall
         a[0] = x;
         a[1] = height;
@@ -273,38 +241,10 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             zz = z;
         }
-   /*     a[0] = x + 10;
-        a[1] = 0;
-        a[2] = z;
-        b[0] = x + 10;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 10;
-        d[1] = height;
-        d[2] = z;
-        make_rectangle_textured(a, b, c, d, mat_amb);
- */
         //draw the inner wall
         xx = x + 9;
         yy = 0;
         zz = z;
- /*     a[0] = x + 9;
-        a[1] = 0;
-        a[2] = z;
-        b[0] = x + 9;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x + 9;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 9;
-        d[1] = height;
-        d[2] = z;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-  */
         for(i = 0; i < iterations; i++){
             for(j = 0; j < iterations; j++){
                 a[0] = xx;
@@ -325,8 +265,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             zz = z;
         }
-        
-        
         //draw top of wall
         a[0] = x + 10;
         a[1] = height;
@@ -395,21 +333,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             xx = x;
         }
-/*
-        a[0] = x;
-        a[1] = 0;
-        a[2] = z;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z;
-        d[0] = x + 10;
-        d[1] = 0;
-        d[2] = z;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-    */
         //draw the inner wall
         xx = x;
         yy = 0;
@@ -434,20 +357,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             xx = x;
         }
-  /*      a[0] = x;
-        a[1] = 0;
-        a[2] = z + 1;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z + 1;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 1;
-        d[0] = x + 10;
-        d[1] = 0;
-        d[2] = z + 1;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-  */
         //draw top of wall
         a[0] = x;
         a[1] = height;
@@ -492,7 +401,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
         make_rectangle_textured(a, b, c, d, mat_amb);
     }
     if(far1){
-        
         //draw the outer wall
         xx = x;
         yy = 0;
@@ -517,21 +425,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             xx = x;
         }
-        
-    /*    a[0] = x;
-        a[1] = 0;
-        a[2] = z + 10;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z + 10;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 10;
-        d[1] = 0;
-        d[2] = z + 10;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-  */
         //draw the inner wall
         xx = x;
         yy = 0;
@@ -556,20 +449,6 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
             yy = yy + delta;
             xx = x;
         }
- /*       a[0] = x;
-        a[1] = 0;
-        a[2] = z + 9;
-        b[0] = x;
-        b[1] = half_height;
-        b[2] = z + 9;
-        c[0] = x + 5;
-        c[1] = half_height;
-        c[2] = z + 9;
-        d[0] = x + 5;
-        d[1] = 0;
-        d[2] = z + 9;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-*/
         //draw top of wall
         a[0] = x;
         a[1] = height;
@@ -612,77 +491,5 @@ void draw_maze_block(float *info, int height, int maze_x, int entry){
         d[1] = height;
         d[2] = z + 9;
         make_rectangle_textured(a, b, c, d, mat_amb);
-        
-  /*      //draw the outer wall
-        a[0] = x;
-        a[1] = 0;
-        a[2] = z + 10;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z + 10;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 10;
-        d[1] = 0;
-        d[2] = z + 10;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-        //draw the inner wall
-        a[0] = x;
-        a[1] = 0;
-        a[2] = z + 9;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z + 9;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 9;
-        d[0] = x + 10;
-        d[1] = 0;
-        d[2] = z + 9;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-        //draw top of wall
-        a[0] = x;
-        a[1] = height;
-        a[2] = z + 9;
-        b[0] = x;
-        b[1] = height;
-        b[2] = z + 10;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 10;
-        d[1] = height;
-        d[2] = z + 9;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-        //draw left wall
-        a[0] = x + 10;
-        a[1] = 0;
-        a[2] = z + 9;
-        b[0] = x + 10;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x + 10;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x + 10;
-        d[1] = height;
-        d[2] = z + 9;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-        //draw right wall
-        a[0] = x;
-        a[1] = 0;
-        a[2] = z + 9;
-        b[0] = x;
-        b[1] = 0;
-        b[2] = z + 10;
-        c[0] = x;
-        c[1] = height;
-        c[2] = z + 10;
-        d[0] = x;
-        d[1] = height;
-        d[2] = z + 9;
-        make_rectangle_textured(a, b, c, d, mat_amb);
-*/
     }
 }

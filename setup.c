@@ -1,5 +1,10 @@
 #include "setup.h"
 
+GLubyte wall_img[786432];
+GLubyte barrel_img[512*512*3];
+GLuint  tex_names[2];
+int FLASH_COLOR;
+
 void my_setup(void) {
 	glShadeModel(GL_SMOOTH);
     lighting_setup();
@@ -7,6 +12,7 @@ void my_setup(void) {
 }
 
 void my_timer(int val) {
+    FLASH_COLOR=0;
     glutPostRedisplay() ;
     return;
 }
@@ -40,7 +46,7 @@ void my_reshape(int w, int h) {
 
 void lighting_setup () {
     
-    GLfloat light0_amb[]      = {0, 0, 0, 1};
+    GLfloat light0_amb[]      = {1.2, 1.2, 1.2, 1};
     GLfloat light0_diffuse[]  = {1, 1, 1, 1};
     GLfloat light0_specular[] = {1, 1, 1, 1};
     GLfloat light0_exponent = 0;
@@ -48,7 +54,7 @@ void lighting_setup () {
     //GLfloat globalAmb[]       = {0.005, 0.005, 0.005, 1};
 
     GLfloat mat_shininess[] = { 50.0 };
-	GLfloat mat_amb_diff[]  = {0.6,0.6,0.6,1};
+	GLfloat mat_amb_diff[]  = {.6,.6,.6,1};
 	GLfloat mat_specular[]  = {0.6, 0.6, 0.6,1};
 	GLfloat mat_high_shininess[] = {100};
 	GLfloat mat_emission[]  = {0,0,0,0};
@@ -66,7 +72,7 @@ void lighting_setup () {
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_amb);
 	glLightf(GL_LIGHT0,GL_SPOT_CUTOFF, 40);
 	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 1);
-    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 2.0f);
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0f);
     //glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 1.0f);
     //glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0f);
 
@@ -93,7 +99,11 @@ void texture_setup() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     
     // load images from files
-      load_bmp("brick.bmp",  wall_img, smallWidth, &tex_names[WALLIMG_TEX]) ;
+      //load_bmp("brick.bmp",  wall_img, smallWidth, &tex_names[WALLIMG_TEX]) ;
+    
+    
+    load_bmp("barreltexf2.bmp",  barrel_img, 512, &tex_names[0]) ;
+    load_bmp("walltex2.bmp", wall_img, 512, &tex_names[1]);
     // load_bmp("soup.bmp",    soup_img,  smallWidth, &tex_names[SOUPIMG_TEX]) ;
 }
 
@@ -138,3 +148,5 @@ void load_bmp(char *fname, GLubyte img[], int size, GLuint *ptname) {
                      0,GL_RGB,GL_UNSIGNED_BYTE,img) ;
     }
 }
+
+

@@ -7,7 +7,6 @@
 int move_npc(float maze[][3], float info[3], int world_X){
     
 	int xx, zz, block, choice;
-	int return_info[2];
     
     xx = (int)info[0] / 10;
     zz = (int)info[1] / 10;
@@ -119,8 +118,6 @@ int move_npc(float maze[][3], float info[3], int world_X){
     return 0;
     
 }
-
-
 
 void enemey_move(float maze[][3], float info[3][3], int worldX, int count){
     

@@ -14,21 +14,50 @@ GLfloat colors [][3] = {
 	{0.5, 0.5, 0.5}  /* 50%grey */
 };
 
+void find_normal(GLfloat *iv1, GLfloat*iv2, GLfloat *iv3, GLfloat *destination) {
+    GLfloat Ux = iv2[0] - iv1[0];
+    GLfloat Uy = iv2[1] - iv1[1];
+    GLfloat Uz = iv2[2] - iv1[2];
+    
+    GLfloat Vx = iv3[0] - iv1[0];
+    GLfloat Vy = iv3[1] - iv1[1];
+    GLfloat Vz = iv3[2] - iv1[2];
+    
+    destination[0] = Uy*Vz - Uz-Vy;
+    destination[1] = Uz*Vx - Ux*Vz;
+    destination[2] = Ux*Vy - Uy*Vx;
+    
+    return;
+}
 
 void make_rectangle_textured(GLfloat *iv1, GLfloat *iv2, GLfloat *iv3, GLfloat *iv4, GLfloat *color) {
+   
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glBindTexture(GL_TEXTURE_2D, tex_names[1]);
+    
+    GLfloat dest[3];
+    find_normal(iv2,iv1,iv3,dest);
     glBegin(GL_POLYGON);
     {
         glColor3fv(color);
-      //  glTexCoord2f(0,0);
+        glTexCoord2f(0,0);
+        glNormal3f(dest[0], dest[1], dest[2]);
         glVertex3fv(iv1);
-     //   glTexCoord2f(0,1);
+        glTexCoord2f(0,1);
+        glNormal3f(dest[0], dest[1], dest[2]);
         glVertex3fv(iv2);
-     //   glTexCoord2f(1,1);
+        glTexCoord2f(1,1);
+        glNormal3f(dest[0], dest[1], dest[2]);
         glVertex3fv(iv3);
-      //  glTexCoord2f(1,0);
+        glTexCoord2f(1,0);
+        glNormal3f(dest[0], dest[1], dest[2]);
         glVertex3fv(iv4);
     }
     glEnd();
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
+    glDisable(GL_TEXTURE_2D);
+    
 }
 
 /* defines floor */

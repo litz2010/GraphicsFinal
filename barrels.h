@@ -6,9 +6,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
-#include "rectangle_generator.h"
-
-#define NUM_BLOCKS 10
-
-void draw_maze_block(float *info, int height, int maze_x, int entry);
+void make_barrel(float height, int sides);

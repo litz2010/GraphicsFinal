@@ -18,10 +18,9 @@
 #define WALLIMG_TEX  0
 #define SOUPIMG_TEX  1
 
-static GLuint  tex_names[NUM_TEXTURES];
-static GLubyte wall_img[smallWidth*smallWidth*3] ;
+//static GLuint  tex_names[NUM_TEXTURES];
+//static GLubyte wall_img[smallWidth*smallWidth*3] ;
 static GLubyte soup_img[smallWidth*smallWidth*3] ;
-static GLuint  tex_names[NUM_TEXTURES];
 
 void glut_setup(void);
 void gl_setup(void);
@@ -35,3 +34,8 @@ void my_timer(int val);
 void NPC_timer(int val);
 void load_bmp(char *fname, GLubyte img[], int size, GLuint *ptname);
 
+
+extern GLuint tex_names[2];
+extern GLubyte wall_img[786432];
+extern GLubyte barrel_img[512*512*3];
+extern int FLASH_COLOR;

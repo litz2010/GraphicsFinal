@@ -22,12 +22,13 @@
 
 #define FALSE 0
 #define TRUE  1
-#define NUM_ENEMIES
+#define NUM_ENEMIES 3
 
 #define DELTA_DEG  10
 #define DELTA_TIME 50
 #define WORLD_X 10
 #define WORLD_Z 10
+
 
 void glut_setup(void);
 void my_keyboard( unsigned char key, int x, int y );
@@ -37,14 +38,7 @@ int enemy_detected1();
 void keyOperations(void);
 void keyPressed(unsigned char key, int x, int y);
 void keyUp(unsigned char key, int x, int y);
-int get_enemy_block(int i);
-int light0_block();
 void checkExited();
-
-/*int light0_theta = 0;
-int viewPerspective = 0; //0 = 3rd person, 1 = first person
-GLfloat light0_pos[] = {5, 2, 2, 0};
-GLfloat light0_dir[] = {0, 0, 1};*/
 
 int keyStates2[256];// = new int[256]; // Create an array of boolean values of length 256 (0-255)
 int step = 0;
@@ -57,11 +51,11 @@ GLfloat light0_dir[] = { 0, -.2, 1 };
 float maze[2500][3];
 float enemy_pos[3][3];
 float user_pos[3]; //not actual position. light0_pos is the user
-int move_count = 0; 
+int move_count = 0;
+float timer = 0;
 
 int numLives = 3;
 int detectionCounter = 0;
-float timer = 0;
 
 int main(int argc, char **argv) {
 	
@@ -101,10 +95,7 @@ void glut_setup(void) {
     /*initialize callback functions */
     glutDisplayFunc( my_display );
     glutReshapeFunc( my_reshape );
-	//keyboard
 	glutKeyboardFunc(my_keyboard);
-	//glutKeyboardFunc(keyPressed); // Tell GLUT to use the method "keyPressed" for key presses  
-	//glutKeyboardUpFunc(keyUp); // Tell GLUT to use the method "keyUp" for key up events 
 	return;
 }
 
@@ -112,7 +103,10 @@ void my_display(void) {
 	GLfloat colors[][3] = {
 		{ 0, 0, 1 }
 	};
-    int xx, zz, block, i, j;
+    int xx, zz, block, i, j, radius = 60, entries, k, add_entry = 0;
+    double temp_x, temp_z;
+    double temp_theta = 0;
+    int draw_entries[200];
 
 	GLUquadricObj *qojb;
 	qojb = gluNewQuadric();
@@ -122,17 +116,23 @@ void my_display(void) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//keyOperations();
-	/*if (viewPerspective){ //first person
-		gluLookAt(light0_pos[0], light0_pos[1], light0_pos[2],
-			light0_pos[0] + sin(M_PI * light0_theta / 180), light0_pos[1], light0_pos[2] + cos(M_PI * light0_theta / 180),
-			0.0, 1.0, 0.0);
-	}
-	else{
-		gluLookAt(-10.0, 10.0, -10.0,  // x,y,z coord of the camera
-			0.0, 2.0, 0.0,  // x,y,z coord of the origin
-			0.0, 1.0, 0.0); // the direction of up (default is y-axis)
-	}*/
+    
+    if (FLASH_COLOR==1) {
+        GLfloat light_color[] = {247.0f,255.0f,1.0f,1.0f};
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+        //FLASH_COLOR=0;
+        
+    }
+    else if (FLASH_COLOR==2) {
+        GLfloat light_color[] = {255.0f,0.0f,0.0f,1.0f};
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+        //FLASH_COLOR=0;
+        
+    }
+    else {
+        GLfloat light_color[] = {1.2f,1.2f,1.2f,1.0f};
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+    }
 
 	if (viewPerspective){ //first person
 		gluLookAt(light0_pos[0], light0_pos[1], light0_pos[2],
@@ -146,34 +146,21 @@ void my_display(void) {
 	}
 	make_floor(WORLD_X, WORLD_Z);
 
-	/*// do transformation for light0 -- should have no effect on anything else
-	glPushMatrix();
-	{
-
-		glTranslatef(light0_pos[0], light0_pos[1], light0_pos[2]);
-		glRotatef(light0_theta, 0, 1, 0);
-		glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
-		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light0_dir);
-		glColor3fv(colors[0]);
-		gluCylinder(qojb, .2f, .4f, 1, 32, 32);		
-	}
-	glPopMatrix();*/
-
-	// do transformation for light0 -- should have no effect on anything else
-    
-    //draw maze
+    //draw maze, 100 blocks surrounding the user
     xx = (int)light0_pos[0] / 10;
     zz = (int)light0_pos[2] / 10;
     block = zz * WORLD_X + xx;
     block = block + 5; //5 blocks left.
     block = block + 5 * WORLD_X;
-    
+ 
     for(j = 0; j < 10; j++){
         for(i = 0; i < 10; i++){
             if(maze[block][0] != -1){
-                draw_maze_block(maze[block], 10, WORLD_X, block);
-                if (maze[i][2] == 1)
-                    draw_barrel(i);
+                if(block / WORLD_X < WORLD_Z){
+                    draw_maze_block(maze[block], 10, WORLD_X, block);
+                    if (maze[block][2] == 1)
+                        draw_barrel(block);
+                }
             }
             block = block - 1;
             if(block < 0)
@@ -184,37 +171,67 @@ void my_display(void) {
         if(block < 0)
             block = 0;
     }
-    
+
 /*
-    for(int i =0; i<WORLD_X*WORLD_Z; i++){
-        if(maze[i][0] != -1){
-            draw_maze_block(maze[i], 10, WORLD_X, i);
-			if (maze[i][2] == 1)
-				draw_barrel(i);
+    attempt to do fov,
+ 
+    xx = (int)light0_pos[0] / 10; //make sure these are set
+    zz = (int)light0_pos[2] / 10;
+    entries = 0;
+    for(j = 0; j < 100; j++){
+        draw_entries[j] = -1;
+    }
+    temp_theta = light0_theta;
+//    if(light0_theta < 0)
+//        temp_theta = temp_theta + 360;
+    temp_theta = temp_theta + 10;
+    
+    for(j =0; j < 12; j++){ //radius / 10
+
+        for(i = 0 ; i < 20; i++){
+            add_entry = 1;
+            temp_x = light0_pos[0] + radius * cos(temp_theta);
+            temp_z = light0_pos[2] + radius * sin(temp_theta);
+            if( ! (((temp_x / 10) >= WORLD_X) || (temp_z / WORLD_X >= WORLD_Z))){ //not a real block
+                block = ((int)temp_z / 10) * WORLD_X + ((int)temp_x / 10);
+                temp_theta = temp_theta - .5;
+                //check if block is already in the array.
+                for(k = 0; k < entries; k++){
+                    if(draw_entries[k] == block){
+                        add_entry = 0;
+                        break;
+                    }
+                }
+                if(add_entry && block > -1 && block < WORLD_X * WORLD_Z){
+                    draw_entries[entries] = block;
+                    entries++;
+                }
+            }
+        }
+ 
+        radius = radius - 5;
+        temp_theta = temp_theta + 10;
+    }
+    //draw maze
+    for(j = 0; j < entries; j++){
+        block = draw_entries[j];
+        if(maze[block][0] != -1){
+            if(block / WORLD_X < WORLD_Z){
+                draw_maze_block(maze[block], 10, WORLD_X, block);
+                if (maze[block][2] == 1)
+                    draw_barrel(block);
+            }
         }
     }
  */
     glPushMatrix();
 	{
-		//printf("user position: %f\t%f\t%f\n", user_pos[0], user_pos[1], user_pos[2]);
-		//printf("light position: %f\t%f\t%f\n\n\n", light0_pos[0], light0_pos[1], light0_pos[2]);
 		glTranslatef(light0_pos[0], light0_pos[1], light0_pos[2]);
 		glRotatef(light0_theta, 0, 1, 0);
 		glLightfv(GL_LIGHT0, GL_POSITION, light0_draw);
-		//light0_dir[0] = sin(M_PI * light0_theta / 180) * 1;
-		//light0_dir[2] = cos(M_PI * light0_theta / 180) * 1;
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light0_dir);
 		glColor3fv(colors[0]);
 		gluCylinder(qojb, .2f, .4f, 1, 32, 32);
-        //light0_pos[0] + sin(M_PI * light0_theta / 180), light0_pos[1], light0_pos[2] + cos(M_PI * light0_theta / 180),
-	}
-	glPopMatrix();
-    
-    glPushMatrix();
-	{
-		glTranslatef(0,2,-10);
-		glColor3fv(colors[0]);
-		gluCylinder(qojb, .2f, .4f, 1, 132, 132);
 	}
 	glPopMatrix();
     
@@ -255,6 +272,17 @@ void my_display(void) {
 		numLives--;
 		printf("Lives remaining: %d\n", numLives);
 		detectionCounter = 10;
+        
+        if (numLives>0) {
+            FLASH_COLOR = 1;
+            glutPostRedisplay();
+            glutTimerFunc(1000,my_timer,0);
+        }
+        else {
+            FLASH_COLOR = 2;
+            glutPostRedisplay();
+            glutTimerFunc(1000,my_timer,0);
+        }
 	}
 
 	if (numLives == 0)
@@ -267,76 +295,13 @@ void my_display(void) {
 		light0_pos[1] = 2;
 		light0_pos[2] = 2;
 		light0_pos[3] = 1;
+        
 	}
-
-	checkExited();
+    checkExited();
     /* buffer is ready */
     glutSwapBuffers();
 }
 
-/*void my_keyboard( unsigned char key, int x, int y ) {
-    int xx, zz, block;
-    switch( key ) {
-        case 'c':
-        case 'C':
-			user_pos[0] = light0_pos[0] - sin(M_PI * light0_theta / 180); //x projected
-			user_pos[1] = light0_pos[2] - cos(M_PI * light0_theta / 180); //z projected
-			if (detect_collision(maze, user_pos, WORLD_X)){
-				light0_pos[0] -= sin(M_PI * light0_theta / 180); //user real postion
-				light0_pos[2] -= cos(M_PI * light0_theta / 180);
-				glutPostRedisplay();
-			}
-			break;
-        case 'e':
-        case 'E':
-			user_pos[0] = light0_pos[0] + sin(M_PI * light0_theta / 180);
-			user_pos[1] = light0_pos[2] + cos(M_PI * light0_theta / 180);
-			if (detect_collision(maze, user_pos, WORLD_X)){
-				light0_pos[0] += sin(M_PI * light0_theta / 180);
-				light0_pos[2] += cos(M_PI * light0_theta / 180);
-				glutPostRedisplay();
-			}
-			break;
-        case 'f':
-        case 'F':
-            light0_theta = (light0_theta - DELTA_DEG)%360;
-            glutPostRedisplay() ;
-            break;
-        case 'i':
-        case 'I':
-            xx = (int)light0_pos[0] / 10;
-            zz = (int)light0_pos[2] / 10;
-            block = zz * WORLD_X + xx;
-            printf("block=%d layout=%f x=%f z=%f\n",block, maze[block][0], light0_pos[0], light0_pos[2]);
-            break;
-        case 'o':
-            glEnable(GL_LIGHT0);
-            glutPostRedisplay() ;
-            break;
-        case 'O':
-            glDisable(GL_LIGHT0);
-            glutPostRedisplay() ;
-            break;
-        case 's':
-        case 'S':
-            light0_theta = (light0_theta + DELTA_DEG)%360;
-            glutPostRedisplay() ;
-            break;
-        case 'v':
-        case 'V':  //viewPerspective ==1 is first person
-            if(viewPerspective)
-                viewPerspective = 0;
-            else
-                viewPerspective = 1;
-            break;
-        case 'q':
-        case 'Q':
-            exit(0) ;
-        default: break;
-    }
-    glutTimerFunc( DELTA_TIME, my_timer, 0);
-    return ;
-}*/
 void my_keyboard(unsigned char key, int x, int y) {
 	int xx, zz, block;
 	xx = 0;
@@ -447,7 +412,7 @@ void NPC_timer(int val) {
 	glutPostRedisplay();
 	enemey_move(maze, enemy_pos, WORLD_X, move_count);
 	glutTimerFunc(300, NPC_timer, 0);
-	timer = timer + 0.3;
+    timer = timer + 0.3;
 	return;
 }
 
@@ -460,8 +425,11 @@ void draw_barrel(int index){
 	glPushMatrix();
 	{ 
 		glTranslatef(xx, 0, zz);
-		glScalef(1, 35, 1);
-		glutSolidCube(1);
+        glEnable(GL_TEXTURE_2D);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glBindTexture(GL_TEXTURE_2D, tex_names[0]);
+		make_barrel(3.2f, 32);
+        glDisable(GL_TEXTURE_2D);
 	}
 	glPopMatrix();
 }
@@ -470,7 +438,7 @@ int enemy_detected1()
 {
 	float sightBoundLong;
 	float sightBoundWide[2];
-
+    
 	int i, returnVal;
 	returnVal = FALSE;
 	
@@ -489,7 +457,7 @@ int enemy_detected1()
 				//user current block
 				int userBlock = light0_block();
 				//printf("enemyBlock: %d userBlock: %d\n", enemyBlock, userBlock);
-				int check;	
+				int check;
 				for (int blockToCheck = enemyBlock; blockToCheck != userBlock; blockToCheck++)
 				{
 					check = adjacent_block_layout_checker(maze, blockToCheck, 1, 0, 0, 0);
@@ -499,15 +467,15 @@ int enemy_detected1()
 						returnVal = FALSE;
 						break;
 					}
-					returnVal = TRUE;					
+					returnVal = TRUE;
 				}
 				/*if (userBlock == light0_block())
-				{
-					returnVal = TRUE;
-				}*/
+                 {
+                 returnVal = TRUE;
+                 }*/
 				//returnVal = TRUE;
 				//printf("Detected enemy facing left!\n");
-			}			
+			}
 		}
 		else if (enemy_pos[i][2] == 2)//enemy facing right
 		{
@@ -522,7 +490,7 @@ int enemy_detected1()
 				//user current block
 				int userBlock = light0_block();
 				//printf("enemyBlock: %d userBlock: %d\n", enemyBlock, userBlock);
-
+                
 				int check;
 				for (int blockToCheck = enemyBlock; blockToCheck != userBlock; blockToCheck--)
 				{
@@ -536,12 +504,12 @@ int enemy_detected1()
 					returnVal = TRUE;
 				}
 				/*if (userBlock == light0_block())
-				{
-					returnVal = TRUE;
-				}*/
+                 {
+                 returnVal = TRUE;
+                 }*/
 				//returnVal = TRUE;
 				//printf("Detected enemy facing right!\n");
-			}			
+			}
 		}
 		else if (enemy_pos[i][2] == 3)//enemy facing close
 		{
@@ -556,7 +524,7 @@ int enemy_detected1()
 				//user current block
 				int userBlock = light0_block();
 				//printf("enemyBlock: %d userBlock: %d\n", enemyBlock, userBlock);
-
+                
 				int check;
 				for (int blockToCheck = enemyBlock; blockToCheck != userBlock; blockToCheck=blockToCheck-10)
 				{
@@ -568,15 +536,15 @@ int enemy_detected1()
 						break;
 					}
 					returnVal = TRUE;
-
+                    
 				}
 				/*if (userBlock == light0_block())
-				{
-					returnVal = TRUE;
-				}*/
+                 {
+                 returnVal = TRUE;
+                 }*/
 				//returnVal = TRUE;
 				//printf("Detected enemy facing close!\n");
-			}			
+			}
 		}
 		else if (enemy_pos[i][2] == 4)//enemy facing far1
 		{
@@ -584,14 +552,14 @@ int enemy_detected1()
 			sightBoundWide[0] = enemy_pos[i][0] - 2.5;//x-5
 			sightBoundWide[1] = enemy_pos[i][0] + 2.5;//x+5
 			if (light0_pos[2] >= enemy_pos[i][1] && light0_pos[2] <= sightBoundLong && light0_pos[0] >= sightBoundWide[0] && light0_pos[0] <= sightBoundWide[1])
-			{				
+			{
 				//check for objects/wall in between player and enemy
 				//get enemy's current block
 				int enemyBlock = get_enemy_block(i);
 				//user current block
 				int userBlock = light0_block();
 				//printf("enemyBlock: %d userBlock: %d\n", enemyBlock, userBlock);
-
+                
 				int check;
 				for (int blockToCheck = enemyBlock; blockToCheck != userBlock; blockToCheck=blockToCheck + 10)
 				{
@@ -605,12 +573,12 @@ int enemy_detected1()
 					returnVal = TRUE;
 				}
 				/*if (userBlock == light0_block())
-				{
-					returnVal = TRUE;
-				}*/
+                 {
+                 returnVal = TRUE;
+                 }*/
 				//returnVal = TRUE;
 				//printf("Detected enemy facing far!\n");
-			}			
+			}
 		}
 	}
 	return returnVal;
@@ -619,7 +587,7 @@ int enemy_detected1()
 //new keyboard functions
 void keyPressed(unsigned char key, int x, int y) {
 	printf("keydown\n");
-	keyStates2[key] = 1; // Set the state of the current key to pressed 
+	keyStates2[key] = 1; // Set the state of the current key to pressed
 	glutPostRedisplay();
 	return;
 }
@@ -746,16 +714,30 @@ int light0_block()
 
 
 void checkExited()
-{	
+{
 	if (light0_pos[0] / 10 >= WORLD_X || light0_pos[2] / 10 >= WORLD_Z)
-	{		
+	{
 		printf("You have exited the maze! It took you: %lf seconds \n", timer);
-		int jj = sizeof(maze) / sizeof(maze[0]);
+        light0_theta = 0;
+        light0_pos[0] = 5;
+        light0_pos[1] = 2;
+        light0_pos[2] = 2;
+        light0_pos[3] = 1;
+        timer=0;
+	/*	int jj = WORLD_X * WORLD_Z;
 		for (int j = 0; j<jj; j++){
 			maze[j][0] = -1; //give all maze blocks a layout of -1
-			maze[j][1] = .5; //maze color
+			//maze[j][1] = .5; //maze color
 		}
-
-		return(0);
+        //return back to beginning of maze;
+		numLives = 3;
+		light0_theta = 0;
+		light0_pos[0] = 5;
+		light0_pos[1] = 2;
+		light0_pos[2] = 2;
+		light0_pos[3] = 1;
+        generate_maze(maze, enemy_pos, WORLD_X, WORLD_Z);
+        glutTimerFunc(2000, NPC_timer, 0);
+     */
 	}	
 }
